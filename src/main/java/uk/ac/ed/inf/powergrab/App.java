@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.mapbox.geojson.BoundingBox;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Geometry;
+import com.mapbox.geojson.Point;
 
 public class App 
 {
@@ -33,8 +36,10 @@ public class App
     	String mapSource = convertStreamToString(conn.getInputStream());
     	FeatureCollection fc = FeatureCollection.fromJson(mapSource);
     	
-    	for (Feature feat : fc.features()) {
-    		System.out.println(feat);
+    	
+    	for (Feature f : fc.features()) {
+    		Point p = (Point) f.geometry();
+    		System.out.println(p.latitude());
     	}
     }
     
