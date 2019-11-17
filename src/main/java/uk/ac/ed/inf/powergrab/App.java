@@ -3,21 +3,23 @@ package uk.ac.ed.inf.powergrab;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
-import com.mapbox.geojson.BoundingBox;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
-import com.mapbox.geojson.Geometry;
 import com.mapbox.geojson.Point;
 
 public class App 
 {
     public static void main( String[] args ) throws IOException
     {
-        getMapNodeList("2019", "01", "01");
+    	ArrayList<Node> mapNodes = getMapNodeList("2019", "01", "01");
+		for (Node nodes : mapNodes) {
+    		System.out.println(nodes);
+    	}
     }
     
-    public static void getMapNodeList(String year, String month, String day) throws IOException {
+    public static ArrayList<Node> getMapNodeList(String year, String month, String day) throws IOException {
     	month = month.length() == 1 ? "0" + month : month;
     	day = day.length() == 1 ? "0" + day : day;
     	String date = year + "/" + month + "/" + day;
@@ -36,11 +38,19 @@ public class App
     	String mapSource = convertStreamToString(conn.getInputStream());
     	FeatureCollection fc = FeatureCollection.fromJson(mapSource);
     	
-    	
+    	ArrayList<Node> mapNodes = new ArrayList<Node>();
     	for (Feature f : fc.features()) {
+    		float coins = f.getProperty("coins").getAsFloat();
+    		float power = f.getProperty("power").getAsFloat();
+    		String type = f.getProperty("marker-symbol").toString();
     		Point p = (Point) f.geometry();
-    		System.out.println(p.latitude());
+    		double lat = p.latitude();
+    		double lon = p.longitude();
+    		
+    		Node n = new Node(coins, power, type, new Position(lat, lon));
+    		mapNodes.add(n);
     	}
+    	return mapNodes;
     }
     
     static String convertStreamToString(java.io.InputStream is) {
