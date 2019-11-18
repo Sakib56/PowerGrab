@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
@@ -15,9 +14,11 @@ public class App
 
 	public static void main( String[] args ) throws IOException
     {
-//    	d = new Drone("Stateless");
+    	Drone d = new Drone("Stateless");
     	ArrayList<Node> mapNodes = getMapNodeList("2019", "01", "01");
-		for (Node nodes : mapNodes) {
+    	Object path = d.play(mapNodes);
+		
+    	for (Node nodes : mapNodes) {
     		System.out.println(nodes);
     	}
     }
