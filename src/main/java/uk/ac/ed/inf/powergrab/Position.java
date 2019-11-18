@@ -25,4 +25,10 @@ public class Position {
 		boolean withinLat = this.latitude > 55.942617 && this.latitude < 55.946233;
 		return withinLong && withinLat;
 	}
+	
+	public double getL2Dist(Position pos) { //without sqrt
+		double deltaLat = Math.abs(this.latitude - pos.latitude);
+		double deltaLong = Math.abs(this.longitude - pos.longitude);
+		return Math.pow(deltaLat, 2) + Math.pow(deltaLong, 2);
+	}
 }

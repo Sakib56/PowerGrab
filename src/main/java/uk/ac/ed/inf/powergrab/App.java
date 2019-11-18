@@ -11,12 +11,11 @@ import com.mapbox.geojson.Point;
 public class App 
 {
     private static java.util.Scanner scanner;
-
 	public static void main( String[] args ) throws IOException
     {
     	Drone d = new Drone("Stateless");
     	ArrayList<Node> mapNodes = getMapNodeList("2019", "01", "01");
-    	Object path = d.play(mapNodes);
+    	FeatureCollection path = d.play(mapNodes);
 		
     	for (Node nodes : mapNodes) {
     		System.out.println(nodes);
