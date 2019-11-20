@@ -10,8 +10,8 @@ public class Drone {
 	public Position currentPos;
 	public ArrayList<Position> posChoices;
 
-	public Drone(Position pos) {
-		this.currentPos = pos;
+	public Drone(Position initPos) {
+		this.currentPos = initPos;
 		this.currentPower = 250;
 		this.currentCoins = 0;
 		this.posChoices = getNextMoves(); 
@@ -37,7 +37,7 @@ public class Drone {
 	
 	public String toString() {
 		String state = currentPower <= 0 ? "DEAD" : "ALIVE";
-		return "<state:"+state+", coins:"+this.currentCoins+", power: "+this.currentPower+
-				", pos("+this.currentPos.latitude +", "+ this.currentPos.longitude+")>";
+		return "<state:"+state+", coins:"+this.currentCoins+", power: "
+				+this.currentPower+", "+this.currentPos.toString()+">";
 	}
 }
