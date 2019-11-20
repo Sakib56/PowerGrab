@@ -1,7 +1,7 @@
 package uk.ac.ed.inf.powergrab;
 
 public class Position {
-	static final double step = 0.0003; 	// magnitude r
+	private static final double step = 0.0003; 	// magnitude r
 	public double latitude; 			// y component
 	public double longitude; 			// x component
 	
@@ -11,8 +11,8 @@ public class Position {
 	}
 	
 	public Position nextPosition(Direction direction) {
-		double newLongitude = this.longitude + step*Math.cos(direction.angle);
-		double newLatitude = this.latitude + step*Math.sin(direction.angle);
+		double newLongitude = this.longitude + getStep()*Math.cos(direction.angle);
+		double newLatitude = this.latitude + getStep()*Math.sin(direction.angle);
 		if (!inPlayArea()) { // if NOT in the playable area return old position
 			return new Position(this.latitude, this.longitude);
 		}
@@ -26,9 +26,17 @@ public class Position {
 		return withinLong && withinLat;
 	}
 	
-	public double getL2Dist(Position pos) { //without sqrt - remember to square range, r
+	public double getL2Dist(Position pos) { // if without sqrt remember to square range, r
 		double deltaLat = Math.abs(this.latitude - pos.latitude);
 		double deltaLong = Math.abs(this.longitude - pos.longitude);
 		return Math.sqrt(Math.pow(deltaLat, 2) + Math.pow(deltaLong, 2)); //with sqrt
+	}
+
+	public double getStep() {
+		return step;
+	}
+	
+	public String toString() {
+		return "pos("+this.latitude+", "+this.longitude+")";
 	}
 }
