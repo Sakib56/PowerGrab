@@ -1,33 +1,29 @@
 package uk.ac.ed.inf.powergrab;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import com.mapbox.geojson.FeatureCollection;
-
 public class Drone {
-	public String state;
-	
-	public Drone(String state) {
-		this.state = state;
-	}
+	public Position currentPos;
+	public ArrayList<Position> posChoices;
 
-	public FeatureCollection play(ArrayList<Node> mapNodes) {
-		Boolean isStateless = this.state.toLowerCase().contains("stateless");
-		return isStateless ? randomWalkPath() : smartPath();
+	public Drone(Position pos) {
+		this.currentPos = pos;
+		this.posChoices = getNextMoves(); 
 	}
 	
-	private FeatureCollection randomWalkPath() {
-		Direction dir = new Direction(0);
-//		ArrayList<Direction> dirChoices = new ArrayList<Direction>();
-		
-		List<Direction> dirChoices = Arrays.asList(dir.E, dir.ENE, dir.ESE, dir.N, dir.NE, dir.NNE, dir.NNW, dir.NW, dir.S);
-		
-		return null;
+	public void moveTo(Position pos) {
+		this.currentPos = pos;
+		this.posChoices = getNextMoves();
 	}
-
-	private FeatureCollection smartPath() {
-		return null;
+	
+	public ArrayList<Position> getNextMoves() {
+		List<Direction> allDirs = new Direction().getAllDirs();
+		ArrayList<Position> posChoices = new ArrayList<Position>();
+		
+		for (Direction dir : allDirs) {
+			posChoices.add(this.currentPos.nextPosition(dir));
+		}
+		return posChoices;
 	}
 }

@@ -13,7 +13,8 @@ public class App
     private static java.util.Scanner scanner;
 	public static void main( String[] args ) throws IOException
     {
-    	Drone d = new Drone("Stateless");
+		Position initPos = new Position(0, 0);
+		StatelessDrone d = new StatelessDrone(initPos);
     	ArrayList<Node> mapNodes = getMapNodeList("2019", "01", "01");
     	FeatureCollection path = d.play(mapNodes);
 		

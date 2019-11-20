@@ -1,10 +1,20 @@
 package uk.ac.ed.inf.powergrab;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Direction {
 	public double angle;
 	
+	public Direction() {}
+	
 	public Direction(double angle) {
 		this.angle = angle;
+	}
+	
+	public List<Direction> getAllDirs() {
+		List<Direction> allDirs = Arrays.asList(E, ENE, NE, NNE, N, NNW, NW, WNW, W, WSW, SW, SSW, S, SSE, SE, ESE);
+		return allDirs;
 	}
 	
 	// East was chosen to be 0 degrees to avoid "CAST" calculations

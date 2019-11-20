@@ -26,9 +26,9 @@ public class Position {
 		return withinLong && withinLat;
 	}
 	
-	public double getL2Dist(Position pos) { //without sqrt
+	public double getL2Dist(Position pos) { //without sqrt - remember to square range, r
 		double deltaLat = Math.abs(this.latitude - pos.latitude);
 		double deltaLong = Math.abs(this.longitude - pos.longitude);
-		return Math.pow(deltaLat, 2) + Math.pow(deltaLong, 2);
+		return Math.sqrt(Math.pow(deltaLat, 2) + Math.pow(deltaLong, 2)); //with sqrt
 	}
 }
