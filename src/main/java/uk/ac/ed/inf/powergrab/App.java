@@ -15,7 +15,7 @@ public class App
 	public static void main( String[] args ) throws IOException
     {
     	ArrayList<Node> mapNodes = getMapNodeList("2019", "01", "01");
-    	Position initPos = mapNodes.get(2).pos;
+    	Position initPos = mapNodes.get(0).pos;
     	StatelessDrone d = new StatelessDrone(initPos);
     	FeatureCollection path = d.play(mapNodes);
     }
