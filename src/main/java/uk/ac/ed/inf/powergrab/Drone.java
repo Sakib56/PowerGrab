@@ -17,12 +17,20 @@ public class Drone {
 		this.posChoices = getNextMoves(); 
 	}
 	
-	public void moveTo(Position pos, float extraPower, float extraCoins) {
+	public void moveTo(Position pos) {
 		System.out.println(toString());
 		this.currentPos = pos;
-		this.currentPower += (extraPower + powerConsump);
-		this.currentCoins += extraCoins;
 		this.posChoices = getNextMoves();
+	}
+	
+	public void use(Node node) {
+		this.currentPower += (node.power + powerConsump);
+		this.currentCoins += node.coins;
+		
+		node.coins = 0;
+		node.power = 0;
+		node.weight = node.getWeight();
+		node.used = true;
 	}
 	
 	public ArrayList<Position> getNextMoves() {
