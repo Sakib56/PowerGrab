@@ -17,24 +17,25 @@ public class StatelessDrone extends Drone {
 		super(initPos);
 	}
 
-	public FeatureCollection play(ArrayList<Node> mapNodes) {
-		for (int i=0; i<1; i++) {
-			Map<Double, Node> nextDistPosMap = getUnsortedBestNextPos(mapNodes);
-			nextDistPosMap = sortBestNextPos(nextDistPosMap);
-			Move bestNextMove = pickBestPos(nextDistPosMap);
-			
-			moveTo(bestNextMove.pos);
-			if (bestNextMove.hasNodeCloseBy()) {
-				use(bestNextMove.nodeCloseBy);
+	public void play(ArrayList<Node> mapNodes) {
+		for (int i=0; i<50; i++) {
+			if (this.currentPower > 0) {
+				Map<Double, Node> nextDistPosMap = getUnsortedBestNextPos(mapNodes);
+				nextDistPosMap = sortBestNextPos(nextDistPosMap);
+				
+				Move bestNextMove = pickBestPos(nextDistPosMap);
+				moveTo(bestNextMove.pos);
+				
+				if (bestNextMove.hasNodeCloseBy()) {
+					use(bestNextMove.nodeCloseBy);
+					mapNodes.removeIf(n -> n.pos == bestNextMove.nodeCloseBy.pos);
+				}
 			}
 		}
-        
-		return null;
 	}	
 	
 	public Map<Double, Node> getUnsortedBestNextPos(ArrayList<Node> mapNodes) {
 		Map<Double, Node> unsortedBestNextPos = new HashMap<Double, Node>();	
-		
 		for (Node node : mapNodes) {
 			if (!node.used) {
 				double fromCurrDist = this.currentPos.getL2Dist(node.pos); 			
@@ -55,7 +56,8 @@ public class StatelessDrone extends Drone {
 		return unsortedBestNextPos;
 	}
 	
-	// Map is sorted by key (distance)
+	// Map<Double, Node> unsortedBestNextPos is sorted by key (distance,
+	// from a node within radius of effect and next possible move)
 	public Map<Double, Node> sortBestNextPos(Map<Double, Node> unsortedBestNextPos) {
         Map<Double, Node> bestNextPos = new TreeMap<Double, Node>(new Comparator<Double>()
         { @Override
@@ -74,25 +76,22 @@ public class StatelessDrone extends Drone {
 		
 		for (Entry<Double, Node> entry : nextDistPosMap.entrySet()) {
 			Node node = entry.getValue();
-			System.out.println(" * "+node.tempFromPos+" w weight "+node.weight);
 			
 			if (node.weight > maxWeight) {
 				maxWeight = node.weight;
+				possibleNextPos.removeIf(p -> p.isTheSame(node.tempFromPos));
 				bestPos = new Move(node.tempFromPos, node);
-				possibleNextPos.remove(bestPos);
 			}
 		}
 		
-		if (maxWeight < 0 || possibleNextPos.isEmpty()) {
+		if (maxWeight < 0 && !possibleNextPos.isEmpty()) {
 			bestPos = new Move(getRandom(possibleNextPos));
 		}
-		
-		System.out.println("\nbest next pos:"+bestPos+", maxWeight:"+maxWeight);
 		
 		return bestPos;
 	}
 	
-	// Gets a random position out of an arraylist of possible next positions
+	// Gets a random element out of an ArrayList<Position>, possibleNextPos
 	public static Position getRandom(ArrayList<Position> possibleNextPos) {
 	    int rnd = new Random().nextInt(possibleNextPos.size());
 	    return possibleNextPos.get(rnd);
