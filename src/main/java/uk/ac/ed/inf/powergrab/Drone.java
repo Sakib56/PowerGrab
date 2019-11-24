@@ -20,7 +20,7 @@ public class Drone {
 	}
 	
 	public void moveTo(Position pos) {
-		if (pos.inPlayArea() && this.currentPower > 0) {
+		if (isAlive() && pos.inPlayArea()) {
 			this.currentPower += powerConsump;
 			this.currentPos = pos;
 			this.movesMadeSoFar.add(pos);
@@ -29,13 +29,15 @@ public class Drone {
 	}
 	
 	public void use(Node node) {
-		this.currentPower += (node.power + powerConsump); //do you consume power if you use a node??
-		this.currentCoins += node.coins;
-		
-		node.coins = 0;
-		node.power = 0;
-		node.weight = node.getWeight();
-		node.used = true;
+		if (isAlive() && this.currentPos.inPlayArea()) {
+			this.currentPower += (node.power + powerConsump); //do you consume power if you use a node??
+			this.currentCoins += node.coins;
+			
+			node.coins = 0;
+			node.power = 0;
+			node.weight = node.getWeight();
+			node.used = true;
+		}
 	}
 	
 	public ArrayList<Position> getNextMoves() {
@@ -43,9 +45,16 @@ public class Drone {
 		ArrayList<Position> posChoices = new ArrayList<Position>();
 		
 		for (Direction dir : allDirs) {
-			posChoices.add(this.currentPos.nextPosition(dir));
+			Position nextPos = this.currentPos.nextPosition(dir);
+			if (nextPos.inPlayArea()) {
+				posChoices.add(nextPos);
+			}
 		}
 		return posChoices;
+	}
+	
+	public boolean isAlive() {
+		return (this.currentPower > -powerConsump);
 	}
 	
 	public void printPath() {
@@ -76,8 +85,8 @@ public class Drone {
 	}
 	
 	public String toString() {
-		String state = currentPower <= 0 ? "DEAD" : "ALIVE";
+		String state = currentPower <= -powerConsump ? "DEAD" : "ALIVE";
 		return "<state:"+state+", coins:"+this.currentCoins+", power:"
-				+this.currentPower+", #moves:"+this.movesMadeSoFar.size()+", "+this.currentPos.toString()+">";
+				+this.currentPower+", #moves:"+(this.movesMadeSoFar.size()-1)+", "+this.currentPos.toString()+">";
 	}
 }

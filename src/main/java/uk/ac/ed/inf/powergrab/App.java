@@ -19,6 +19,8 @@ public class App
     	StatelessDrone d = new StatelessDrone(initPos);
     	d.play(mapNodes);
     	d.printPath();
+    	
+    	System.out.println("\n"+d.toString());
     }
     
     public static ArrayList<Node> getMapNodeList(String year, String month, String day) throws IOException {
