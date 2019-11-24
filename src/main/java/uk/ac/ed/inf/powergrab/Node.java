@@ -1,7 +1,7 @@
 package uk.ac.ed.inf.powergrab;
 
 public class Node {
-	private static final double r = 0.00025; 	// radius of effect
+	private static final double r = 0.00025; // radius of effect
 	public boolean used = false;
 	public Position tempFromPos = null;	// temp buffer to store a pos that drone can get to s.t. in radius of this node
 	public double weight = 0;
