@@ -11,11 +11,11 @@ public class Position {
 	}
 	
 	public Position nextPosition(Direction direction) {
-		double newLongitude = this.longitude + getStep()*Math.cos(direction.angle);
-		double newLatitude = this.latitude + getStep()*Math.sin(direction.angle);
 		if (!inPlayArea()) { // if NOT in the playable area return old position
 			return new Position(this.latitude, this.longitude);
 		}
+		double newLongitude = this.longitude + getStep()*Math.cos(direction.angle);
+		double newLatitude = this.latitude + getStep()*Math.sin(direction.angle);
 		return new Position(newLatitude, newLongitude); // otherwise return new position
 	}
 	
@@ -34,6 +34,12 @@ public class Position {
 
 	public double getStep() {
 		return step;
+	}
+	
+	public boolean isTheSame(Position pos) {
+		boolean sameLat = this.latitude == pos.latitude;
+		boolean sameLong = this.longitude == pos.longitude;
+		return sameLat && sameLong;
 	}
 	
 	public String toString() {
