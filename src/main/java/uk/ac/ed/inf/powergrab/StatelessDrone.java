@@ -8,8 +8,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 
-import com.mapbox.geojson.FeatureCollection;
-
 public class StatelessDrone extends Drone {
 	private Move bestPos;
 
@@ -18,8 +16,8 @@ public class StatelessDrone extends Drone {
 	}
 
 	public void play(ArrayList<Node> mapNodes) {
-		for (int i=0; i<50; i++) {
-			if (this.currentPower > 0) {
+		for (int i=0; i<250; i++) {
+			if (isAlive()) {
 				Map<Double, Node> nextDistPosMap = getUnsortedBestNextPos(mapNodes);
 				nextDistPosMap = sortBestNextPos(nextDistPosMap);
 				
@@ -30,6 +28,8 @@ public class StatelessDrone extends Drone {
 					use(bestNextMove.nodeCloseBy);
 					mapNodes.removeIf(n -> n.pos == bestNextMove.nodeCloseBy.pos);
 				}
+			} else {
+				break;
 			}
 		}
 	}	
