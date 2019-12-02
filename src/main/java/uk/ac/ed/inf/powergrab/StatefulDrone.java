@@ -8,10 +8,10 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 
-public class StatelessDrone extends Drone {
+public class StatefulDrone extends Drone {
 	private Move bestPos;
 
-	public StatelessDrone(Position initPos) {
+	public StatefulDrone(Position initPos) {
 		super(initPos);
 	}
 

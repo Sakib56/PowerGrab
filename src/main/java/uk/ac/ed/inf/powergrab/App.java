@@ -16,7 +16,8 @@ public class App
     {
     	ArrayList<Node> mapNodes = getMapNodeList("2019", "01", "01");
     	Position initPos = mapNodes.get(0).pos;
-    	StatelessDrone d = new StatelessDrone(initPos);
+//    	StatelessDrone d = new StatelessDrone(initPos);
+    	StatefulDrone d = new StatefulDrone(initPos);
     	d.play(mapNodes);
     	d.printPath();
     	
