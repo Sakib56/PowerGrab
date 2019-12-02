@@ -45,4 +45,16 @@ public class Position {
 	public String toString() {
 		return "pos("+this.latitude+", "+this.longitude+")";
 	}
+	
+	public double getAngleBetween(Position nodePos) {
+		double dy = nodePos.longitude - this.longitude;
+		double dx = nodePos.latitude - this.latitude;
+		double theta = Math.atan(dy/dx);
+		if (dx < 0) {
+			theta = 180 + theta;
+		} else if (dy < 0) {
+			theta = 360 + theta;
+		}
+		return theta;
+	}
 }

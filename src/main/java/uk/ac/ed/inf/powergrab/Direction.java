@@ -12,6 +12,23 @@ public class Direction {
 		this.angle = angle;
 	}
 	
+	public Direction snapDir(double angle) {
+		List<Direction> allDirs = getAllDirs();
+		Direction directionToMoveIn = getAllDirs().get(getAllDirs().size()-1);
+		
+		for (int i=0; i<allDirs.size()-1; i++) {
+			Direction dir = allDirs.get(i);
+			Direction nextDir = allDirs.get(i+1);
+			
+			if (dir.angle <= angle && angle < (dir.angle+nextDir.angle)/2) {
+				directionToMoveIn = dir;
+			} else if ((dir.angle+nextDir.angle)/2 <= angle && angle < nextDir.angle) {
+				directionToMoveIn = nextDir;
+			}
+		}
+		return directionToMoveIn;
+	}
+	
 	public List<Direction> getAllDirs() {
 		List<Direction> allDirs = Arrays.asList(E, ENE, NE, NNE, N, NNW, NW, WNW, W, WSW, SW, SSW, S, SSE, SE, ESE);
 		return allDirs;

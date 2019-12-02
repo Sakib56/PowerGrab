@@ -7,6 +7,7 @@ public class Drone {
 	static final float powerConsump = (float) -1.25;
 	public float currentPower;
 	public float currentCoins;
+	public int maxMovesAllowed = 250;
 	public Position currentPos;
 	public ArrayList<Position> posChoices;
 	public ArrayList<Position> movesMadeSoFar = new ArrayList<Position>();
@@ -26,6 +27,11 @@ public class Drone {
 			this.movesMadeSoFar.add(pos);
 		}
 		this.posChoices = getNextMoves();
+	}
+	
+	public void moveStarightTo(Node node) {
+		double angle = this.currentPos.getAngleBetween(node.pos);
+		Direction dirToMoveIn = new Direction().snapDir(angle);
 	}
 	
 	public void use(Node node) {
@@ -88,5 +94,13 @@ public class Drone {
 		String state = currentPower <= -powerConsump ? "DEAD" : "ALIVE";
 		return "<state:"+state+", coins:"+this.currentCoins+", power:"
 				+this.currentPower+", #moves:"+(this.movesMadeSoFar.size()-1)+", "+this.currentPos.toString()+">";
+	}
+	
+	public void setMaxMovesAllowed(int numberOfMoves) {
+		this.maxMovesAllowed = numberOfMoves+1;
+	}
+	
+	public void setFuel(float power) {
+		this.currentPower = power;
 	}
 }
