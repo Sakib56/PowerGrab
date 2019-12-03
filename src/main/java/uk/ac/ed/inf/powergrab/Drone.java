@@ -29,21 +29,9 @@ public class Drone {
 		this.posChoices = getNextMoves();
 	}
 	
-	public void moveStarightTo(Node node) {
-		double distToNode = this.currentPos.getL2Dist(node.pos);	
-		
-		for (double i=0; i <= Math.ceil(distToNode/this.currentPos.getStep()); i++) {
-			double angle = this.currentPos.getAngleBetween(node.pos);
-			Direction dirToMoveIn = new Direction().snapDir(angle);
-			Position posToMoveIn = this.currentPos.nextPosition(dirToMoveIn);
-			
-			moveTo(posToMoveIn);
-		}
-	}
-	
 	public void use(Node node) {
 		if (isAlive() && this.currentPos.inPlayArea()) {
-			this.currentPower += (node.power + powerConsump); //do you consume power if you use a node??
+			this.currentPower += node.power;
 			this.currentCoins += node.coins;
 			
 			node.coins = 0;
