@@ -10,9 +10,11 @@ import java.util.TreeMap;
 
 public class StatelessDrone extends Drone {
 	private Move bestPos;
+	private Random randomSeed;
 
-	public StatelessDrone(Position initPos) {
+	public StatelessDrone(Position initPos, long randomSeed) {
 		super(initPos);
+		this.randomSeed = new Random(randomSeed); 
 	}
 
 	public void play(ArrayList<Node> mapNodes) {
@@ -92,8 +94,8 @@ public class StatelessDrone extends Drone {
 	}
 	
 	// Gets a random element out of an ArrayList<Position>, possibleNextPos
-	public static Position getRandom(ArrayList<Position> possibleNextPos) {
-	    int rnd = new Random().nextInt(possibleNextPos.size());
+	public Position getRandom(ArrayList<Position> possibleNextPos) {
+	    int rnd = randomSeed.nextInt(possibleNextPos.size());
 	    return possibleNextPos.get(rnd);
 	}
 }

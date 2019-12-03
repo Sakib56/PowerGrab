@@ -16,12 +16,12 @@ public class App
     {
     	ArrayList<Node> mapNodes = getMapNodeList("2019", "01", "01");
     	Position initPos = mapNodes.get(0).pos;
-//    	StatelessDrone d = new StatelessDrone(initPos);
+//    	StatelessDrone d = new StatelessDrone(initPos, (long) 0);
     	StatefulDrone d = new StatefulDrone(initPos);
     	d.play(mapNodes);
     	d.printPath();
     	
-    	System.out.println("\n"+d.toString());
+    	System.out.println(d.toString());
     }
     
     public static ArrayList<Node> getMapNodeList(String year, String month, String day) throws IOException {
