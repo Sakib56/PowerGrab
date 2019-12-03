@@ -30,8 +30,15 @@ public class Drone {
 	}
 	
 	public void moveStarightTo(Node node) {
-		double angle = this.currentPos.getAngleBetween(node.pos);
-		Direction dirToMoveIn = new Direction().snapDir(angle);
+		double distToNode = this.currentPos.getL2Dist(node.pos);	
+		
+		for (double i=0; i <= Math.ceil(distToNode/this.currentPos.getStep()); i++) {
+			double angle = this.currentPos.getAngleBetween(node.pos);
+			Direction dirToMoveIn = new Direction().snapDir(angle);
+			Position posToMoveIn = this.currentPos.nextPosition(dirToMoveIn);
+			
+			moveTo(posToMoveIn);
+		}
 	}
 	
 	public void use(Node node) {
@@ -94,13 +101,5 @@ public class Drone {
 		String state = currentPower <= -powerConsump ? "DEAD" : "ALIVE";
 		return "<state:"+state+", coins:"+this.currentCoins+", power:"
 				+this.currentPower+", #moves:"+(this.movesMadeSoFar.size()-1)+", "+this.currentPos.toString()+">";
-	}
-	
-	public void setMaxMovesAllowed(int numberOfMoves) {
-		this.maxMovesAllowed = numberOfMoves+1;
-	}
-	
-	public void setFuel(float power) {
-		this.currentPower = power;
 	}
 }
