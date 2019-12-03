@@ -47,14 +47,15 @@ public class Position {
 	}
 	
 	public double getAngleBetween(Position nodePos) {
-		double dy = nodePos.longitude - this.longitude;
-		double dx = nodePos.latitude - this.latitude;
-		double theta = Math.atan(dy/dx);
+		double dx = nodePos.longitude - this.longitude;
+		double dy = nodePos.latitude - this.latitude;
+		double m = dy/dx;
+		double angle = Math.atan(m);
 		if (dx < 0) {
-			theta = 180 + theta;
+			angle = Math.PI + angle;
 		} else if (dy < 0) {
-			theta = 360 + theta;
+			angle = 2*Math.PI + angle;
 		}
-		return theta;
+		return angle;
 	}
 }

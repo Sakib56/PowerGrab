@@ -22,13 +22,22 @@ public class Direction {
 			
 			if (dir.angle <= angle && angle < (dir.angle+nextDir.angle)/2) {
 				directionToMoveIn = dir;
+				break;
 			} else if ((dir.angle+nextDir.angle)/2 <= angle && angle < nextDir.angle) {
 				directionToMoveIn = nextDir;
+				break;
+			} else if (dir.angle == 1.875 * Math.PI) {
+				if ((dir.angle+2*Math.PI)/2 <= angle && angle < 2*Math.PI) {
+					directionToMoveIn = dir;
+				} else {
+					directionToMoveIn = E;
+				}
 			}
 		}
+		
 		return directionToMoveIn;
-	}
-	
+	} 
+		
 	public List<Direction> getAllDirs() {
 		List<Direction> allDirs = Arrays.asList(E, ENE, NE, NNE, N, NNW, NW, WNW, W, WSW, SW, SSW, S, SSE, SE, ESE);
 		return allDirs;
