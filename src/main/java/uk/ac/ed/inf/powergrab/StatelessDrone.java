@@ -12,13 +12,18 @@ import java.util.TreeMap;
 public class StatelessDrone extends Drone {
 	private Move bestPos;
 	private Random randomSeed;
+	private Map<Double, Node> distNodeMap;
+	private ArrayList<Node> mapNodes;
 
+	// stateless drone constructer
 	public StatelessDrone(Position initPos, long randomSeed) {
 		super(initPos);
 		this.randomSeed = new Random(randomSeed); 
 	}
 
 	public void play(ArrayList<Node> mapNodes) {
+		this.mapNodes = mapNodes;
+		
 		for (int i=0; i<this.maxMovesAllowed; i++) {
 			if (isAlive()) {
 				Map<Double, Node> nextDistPosMap = getUnsortedBestNextPos(mapNodes);
@@ -35,7 +40,7 @@ public class StatelessDrone extends Drone {
 				break;
 			}
 		}
-	}	
+	}
 	
 	public Map<Double, Node> getUnsortedBestNextPos(ArrayList<Node> mapNodes) {
 		Map<Double, Node> unsortedBestNextPos = new HashMap<Double, Node>();	
