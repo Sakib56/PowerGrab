@@ -3,6 +3,7 @@ package uk.ac.ed.inf.powergrab;
 import java.util.ArrayList;
 import java.util.List;
 
+// drone super class, contains all methods and attributes shared by both stateful and stateless
 public class Drone {
 	static final float powerConsump = (float) -1.25;
 	public float currentPower;
@@ -12,6 +13,7 @@ public class Drone {
 	public ArrayList<Position> posChoices;
 	public ArrayList<Position> movesMadeSoFar = new ArrayList<Position>();
 
+	// Drone constructor, super class for stateful and stateless
 	public Drone(Position initPos) {
 		this.currentPos = initPos;
 		this.currentPower = 250;
@@ -20,8 +22,14 @@ public class Drone {
 		this.movesMadeSoFar.add(initPos);
 	}
 	
+	// Makes Drone move to a specific position
 	public void moveTo(Position pos) {
+		// Move only occurs if Drone is still alive and the position 
+		// to be moved to, pos is in the playable area
 		if (isAlive() && pos.inPlayArea()) {
+			// Power reduced by the power consumption, step cost
+			// Current position is updated to new pos
+			// Position added to movesMadeSoFar, used to make the path
 			this.currentPower += powerConsump;
 			this.currentPos = pos;
 			this.movesMadeSoFar.add(pos);
@@ -54,10 +62,13 @@ public class Drone {
 		return posChoices;
 	}
 	
+	// Checks if the Drone is "alive", has enough power to make another move
 	public boolean isAlive() {
+		// Check against powerConsump not 0, or we'll get negative power
 		return (this.currentPower > -powerConsump);
 	}
 	
+	// prints the path to terminal
 	public void printPath() {
     	String coordinates = "";
     	for (int i=0; i<this.movesMadeSoFar.size(); i++) {
@@ -81,8 +92,6 @@ public class Drone {
     			"        ]\r\n" + 
     			"      }\r\n" + 
     			"    },");	
-
-//    	System.out.println("\n"+d.toString());
 	}
 	
 	public String toString() {
