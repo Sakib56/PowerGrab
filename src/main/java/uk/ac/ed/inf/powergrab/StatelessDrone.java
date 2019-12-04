@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 
+//sub class of drone (super class)
 public class StatelessDrone extends Drone {
 	private Move bestPos;
 	private Random randomSeed;

@@ -21,7 +21,15 @@ public class App
 		// path is then printed to terminal
 		
     	ArrayList<Node> mapNodes = getMapNodeList("2019", "01", "01");
-    	Position initPos = mapNodes.get(0).pos;
+    	
+    	float totalCoins = 0;
+    	for (Node n: mapNodes) {
+    		if (n.weight>0) {
+    			totalCoins += n.coins;
+    		}
+    	}
+    	
+    	Position initPos = mapNodes.get(9).pos;
 //    	StatelessDrone d = new StatelessDrone(initPos, (long) 0); 
     	// second argument of stateless drone is the seed for the random walk
     	// this is so that the random walk is reproducible
@@ -30,7 +38,9 @@ public class App
     	d.play(mapNodes);
     	d.printPath();
     	
-    	System.out.println(d.toString());
+    	System.out.println("\n"+d.toString());
+    	System.out.println(d.currentCoins+"/"+totalCoins+" = "+100*d.currentCoins/totalCoins+"%");
+    	
     }
     
 	// returns an arraylist of node objects (charging stations)

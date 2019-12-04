@@ -57,10 +57,13 @@ public class Position {
 	
 	// works out the angle between any two points from east, (x-axis) 
 	public double getAngleBetween(Position nodePos) {
+		// dx (change in x) and dy (change in y) can be used to calculate gradient, m
+		// m = tan(a) = dy/dx, so a = atan(dy/dx)
 		double dx = nodePos.longitude - this.longitude;
+		dx = dx==0 ? 1 : dx; // if dx is 0, division by 0 will occur and cause problems
 		double dy = nodePos.latitude - this.latitude;
 		double m = dy/dx;
-		double angle = Math.atan(m);
+		double angle = Math.atan(m); 
 		// CAST rules for tan(x)
 		if (dx < 0) {
 			angle = Math.PI + angle;

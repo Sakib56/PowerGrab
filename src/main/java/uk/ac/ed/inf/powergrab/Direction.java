@@ -40,7 +40,7 @@ public class Direction {
 			// last case checking between first and last entry of allDirs (E and ESE)
 			// check has to be done because E=0 and ESE=337.5, and checking if E<=a<ESE won't work
 			// so E=360 in this case (so check can work)
-			// Hard coded (not good), for ease of readability 
+			// hard coded (not good), for ease of readability 
 			else if (dir.angle == ESE.angle) {
 				if ((dir.angle+2*Math.PI)/2 <= angle && angle < 2*Math.PI) {
 					directionToMoveIn = dir;

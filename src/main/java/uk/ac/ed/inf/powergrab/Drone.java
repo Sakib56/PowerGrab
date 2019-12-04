@@ -13,7 +13,7 @@ public class Drone {
 	public ArrayList<Position> posChoices;
 	public ArrayList<Position> movesMadeSoFar = new ArrayList<Position>();
 
-	// Drone constructor, super class for stateful and stateless
+	// drone constructor
 	public Drone(Position initPos) {
 		this.currentPos = initPos;
 		this.currentPower = 250;
@@ -22,39 +22,48 @@ public class Drone {
 		this.movesMadeSoFar.add(initPos);
 	}
 	
-	// Makes Drone move to a specific position
+	// makes drone move to a specific position
 	public void moveTo(Position pos) {
-		// Move only occurs if Drone is still alive and the position 
+		// move only occurs if drone is still alive and the position 
 		// to be moved to, pos is in the playable area
 		if (isAlive() && pos.inPlayArea()) {
-			// Power reduced by the power consumption, step cost
-			// Current position is updated to new pos
-			// Position added to movesMadeSoFar, used to make the path
+			// power reduced by the power consumption (step cost)
+			// current position is updated to new pos
+			// position added to movesMadeSoFar (list of positions), used to make the path
 			this.currentPower += powerConsump;
 			this.currentPos = pos;
 			this.movesMadeSoFar.add(pos);
 		}
+		// next possible moves updated
 		this.posChoices = getNextMoves();
 	}
 	
+	// let's a drone use a charging station
 	public void use(Node node) {
+		// drone can only use a charging station if it's "alive" and is within playable area
 		if (isAlive() && this.currentPos.inPlayArea()) {
+			// when drone uses a station, drone takes coins and power from station and it has been used
 			this.currentPower += node.power;
 			this.currentCoins += node.coins;
 			
 			node.coins = 0;
 			node.power = 0;
-			node.weight = node.getWeight();
-			node.used = true;
+			node.weight = node.getWeight(); // weight set to 0 (0+0)
+			node.used = true;				// node marked as used, will no longer be considered
 		}
 	}
 	
+	// gets a list of (allowable) positions which correspond to moving in each direction
 	public ArrayList<Position> getNextMoves() {
+		// gets the list of all 16 directions and creates an empty postions arraylist
 		List<Direction> allDirs = new Direction().getAllDirs();
 		ArrayList<Position> posChoices = new ArrayList<Position>();
 		
+		// for each direction, dir
 		for (Direction dir : allDirs) {
+			// calculate position resulted by moving in that direction, nextPos
 			Position nextPos = this.currentPos.nextPosition(dir);
+			// check if nextPos is in playable area, if so add it to the list to be returned
 			if (nextPos.inPlayArea()) {
 				posChoices.add(nextPos);
 			}
@@ -62,9 +71,9 @@ public class Drone {
 		return posChoices;
 	}
 	
-	// Checks if the Drone is "alive", has enough power to make another move
+	// checks if the drone is "alive", has enough power to make another move
 	public boolean isAlive() {
-		// Check against powerConsump not 0, or we'll get negative power
+		// check against powerConsump not 0, or we'll get negative power
 		return (this.currentPower > -powerConsump);
 	}
 	
