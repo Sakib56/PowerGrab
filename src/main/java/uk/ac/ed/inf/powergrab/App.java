@@ -19,7 +19,8 @@ public class App
 		// a new state(less/full) drone is created using the init pos defined
 		// drone, d is made to play which carries out the appropriate algorithm
 		// path is then printed to terminal
-		
+		float avg = 0;
+    	for (int i=0; i<49; i++) {
     	ArrayList<Node> mapNodes = getMapNodeList("2019", "01", "01");
     	
     	float totalCoins = 0;
@@ -29,17 +30,21 @@ public class App
     		}
     	}
     	
-    	Position initPos = mapNodes.get(7).pos;
+
+    	Position initPos = mapNodes.get(i).pos;
 //    	StatelessDrone d = new StatelessDrone(initPos, (long) 3); 
     	// second argument of stateless drone is the seed for the random walk
     	// this is so that the random walk is reproducible
     	
     	StatefulDrone d = new StatefulDrone(initPos);
     	d.play(mapNodes);
-    	d.printPath();
+//    	d.printPath();
     	
-    	System.out.println("\n"+d.toString());
+//    	System.out.println("\n"+d.toString());
     	System.out.println(d.currentCoins+"/"+totalCoins+" = "+100*d.currentCoins/totalCoins+"%");
+    	avg += 100*d.currentCoins/totalCoins;
+    	}
+    	System.out.println(avg/49);
     	
     }
     

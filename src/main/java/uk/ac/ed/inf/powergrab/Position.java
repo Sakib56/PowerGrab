@@ -13,12 +13,15 @@ public class Position {
 	
 	// returns a new position resulted by moving in a specific direction
 	public Position nextPosition(Direction direction) {
-		if (!inPlayArea()) { // if not in the playable area return old position
-			return new Position(this.latitude, this.longitude);
+		double angle = direction.angle;
+		if (!inPlayArea()) { // if not in the playable area, move towards centre of map (avoids getting stuck)
+			Position centreOfMap = new Position((55.942617+55.946233)/2, (-3.192473-3.184319)/2);
+			angle = this.getAngleBetween(centreOfMap);
+			angle = new Direction().snapDir(angle).angle;
 		}
 		// otherwise calculate and return new position
-		double newLongitude = this.longitude + getStep()*Math.cos(direction.angle);
-		double newLatitude = this.latitude + getStep()*Math.sin(direction.angle);
+		double newLongitude = this.longitude + getStep()*Math.cos(angle);
+		double newLatitude = this.latitude + getStep()*Math.sin(angle);
 		return new Position(newLatitude, newLongitude);
 	}
 	

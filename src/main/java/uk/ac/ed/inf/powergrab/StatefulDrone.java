@@ -1,7 +1,6 @@
 package uk.ac.ed.inf.powergrab;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +23,7 @@ public class StatefulDrone extends Drone {
 		this.mapNodes = mapNodes;
 		
 		// while the drone is alive...
-		while (isAlive() && this.movesMadeSoFar.size() <= this.maxMovesAllowed) {
+		while (isAlive() && this.movesMadeSoFar.size() < this.maxMovesAllowed) {
 			// create a map (key, value pairs) where the key is the 
 			// distance from currentPos to a node and value is the node object
 			// this map is then sorted by key (distances) in ascending order
@@ -54,6 +53,7 @@ public class StatefulDrone extends Drone {
 	public Map<Double, Node> getUnsortedDistNodes() {
 		// create a new map object (double for dist, node for charging stations)
 		Map<Double, Node> unsortedDistNodes = new HashMap<Double, Node>();
+		
 		// for each node, n in mapNodes (list of all the nodes)...
 		for (Node node : this.mapNodes) {
 			// if n has not already been used...
@@ -99,29 +99,6 @@ public class StatefulDrone extends Drone {
 		return bestNode;
 	}
 	
-	// returns true if given pos puts drone into range of a bad node, false otherwise
-	public Boolean isInRangeOfClosestRedNode(Position pos) {
-		// linear search through the map to find bad nodes, since map is already sorted by key (distance)
-		// we can be sure that the first node with weight<=0 (red) is the closest red node
-		
-		// for every node, n in the map...
-		for (Entry<Double, Node> entry : this.distNodeMap.entrySet()) {
-			Node node = entry.getValue();
-			// check if n is red
-			if (node.weight <= 0) {
-				// check if given position puts us into range of a red node
-				if (pos.getL2Dist(node.pos) <= node.getRadius()) {
-					return true; // if so, return true
-				}
-				 // we can break after, as the distNodeMap is sorted by distance, so first red node only needs to be considered
-				// there is no point checking others
-				break;
-			}
-		}
-		// if next pos does not put drone into range of a red node, then return false
-		return false;
-	}
-	
 	// makes drone move in a straight-ish line to a node
 	public void moveStarightTo(Node node) {
 		// calculate number of steps needed to reach that node, ceil(dist/step_size)
@@ -134,50 +111,20 @@ public class StatefulDrone extends Drone {
 			double angle = this.currentPos.getAngleBetween(node.pos);
 			Direction dirToMoveIn = new Direction().snapDir(angle);
 			Position posToMoveIn = this.currentPos.nextPosition(dirToMoveIn);
-			
-			// simple red node avoidance
-			// if next position puts the drone in range of a red node, then the drone will scan through all 16 directions (in a random order) 
-			// and see if those put the drone into range of a red node, if it doesn't drone will move there... in the case where all positions
-			// result in the drone being in range of a red node, it will just carry on it's initial route (striaght line-ish)
-			if (!isInRangeOfClosestRedNode(posToMoveIn)) {
-				moveTo(posToMoveIn);
-			} else {
-				ArrayList<Position> possibleNextPos = getNextMoves(); 				// gets a list of all positions resulted by moving in all possible directions 
-				Collections.shuffle(possibleNextPos);								// shuffles this list, so that there is no bias when choosing where to goto to avoid red
-				ArrayList<Boolean> isAllBad = new ArrayList<Boolean>();				// boolean array, isAllBad is used to see if all positions are bad or not
-				for (Position pos : possibleNextPos) {								// for every pos, p in shuffles list of possible positions...
-					boolean takesDroneToBadPos = isInRangeOfClosestRedNode(pos);	// check if p puts drone into range of red node
-					if (!takesDroneToBadPos) {										// if p doesn't take drone to bad place
-						moveTo(pos);												// then move there
-						isAllBad.add(false);										// and add false to isAllBad, so we know that not all were bad
-						break;														// we can break out of loop, since we only make one move (nom point checking rest)
-					} else {														// otherwise, (if the p is a bad place), then add true to isAllBad - this is done so that
-						isAllBad.add(true);											// an "all" (and on all elems) can be applied on isAllBad meaning that all p's were bad
-					}
-				}
-				if (areAllTrue(isAllBad)) {											// if all p's were bad, just move to where drone was intending to go (into red node)
-					moveTo(posToMoveIn);
-				}
-			}
+			moveTo(posToMoveIn);
 		}
-	}
-	
-	public static boolean areAllTrue(ArrayList<Boolean> allBad) {
-	    for(boolean b : allBad) if(!b) return false;
-	    return true;
 	}
 	
 	// makes drone move to a specific position
 	public void moveTo(Position pos) {
 		// move only occurs if drone is still alive and the position 
 		// to be moved to, pos is in the playable area
+
 		if (isAlive() && pos.inPlayArea()) {
 			// power reduced by the power consumption (step cost)
 			// current position is updated to new pos
-			// position added to movesMadeSoFar (list of positions), used to make the path
 			this.currentPower += powerConsump;
 			this.currentPos = pos;
-			this.movesMadeSoFar.add(pos);
 			
 			// at each step, distance-node map, distNodeMap is recaculated and sorted
 			// this is done so that distances in distNodeMap are always up to date
@@ -201,6 +148,10 @@ public class StatefulDrone extends Drone {
 			}
 		}
 		// next possible moves updated
+		// position added to movesMadeSoFar (list of positions), used to make the path
 		this.posChoices = getNextMoves();
+		if (this.movesMadeSoFar.size() <= this.maxMovesAllowed) {
+			this.movesMadeSoFar.add(pos);
+		}
 	}
 }
