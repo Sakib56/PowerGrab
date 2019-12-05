@@ -2,6 +2,7 @@ package uk.ac.ed.inf.powergrab;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 // drone super class, contains all methods and attributes shared by both stateful and stateless
 public class Drone {
@@ -12,6 +13,7 @@ public class Drone {
 	public Position currentPos;
 	public ArrayList<Position> posChoices;
 	public ArrayList<Position> movesMadeSoFar = new ArrayList<Position>();
+	public Random randomSeed = new Random();
 
 	// drone constructor
 	public Drone(Position initPos) {
@@ -91,5 +93,11 @@ public class Drone {
 		String state = currentPower <= -powerConsump ? "DEAD" : "ALIVE";
 		return "<state:"+state+", coins:"+this.currentCoins+", power:"
 				+this.currentPower+", #moves:"+(this.movesMadeSoFar.size()-1)+", "+this.currentPos.toString()+">";
+	}
+	
+	// Gets a random element out of an ArrayList<Position>, possibleNextPos
+	public Position getRandom(ArrayList<Position> possibleNextPos) {
+	    int rnd = randomSeed.nextInt(possibleNextPos.size());
+	    return possibleNextPos.get(rnd);
 	}
 }

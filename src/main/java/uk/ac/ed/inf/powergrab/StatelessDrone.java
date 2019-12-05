@@ -10,7 +10,6 @@ import java.util.TreeMap;
 
 //sub class of drone (super class)
 public class StatelessDrone extends Drone {
-	private Random randomSeed;
 	private Map<Double, Node> distNodeMap;
 	private ArrayList<Node> mapNodes;
 
@@ -152,11 +151,5 @@ public class StatelessDrone extends Drone {
 		}
 		// next possible moves updated
 		this.posChoices = getNextMoves();
-	}
-	
-	// Gets a random element out of an ArrayList<Position>, possibleNextPos
-	public Position getRandom(ArrayList<Position> possibleNextPos) {
-	    int rnd = randomSeed.nextInt(possibleNextPos.size());
-	    return possibleNextPos.get(rnd);
 	}
 }
