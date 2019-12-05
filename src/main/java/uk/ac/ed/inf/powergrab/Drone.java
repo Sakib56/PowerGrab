@@ -22,22 +22,6 @@ public class Drone {
 		this.movesMadeSoFar.add(initPos);
 	}
 	
-	// makes drone move to a specific position
-	public void moveTo(Position pos) {
-		// move only occurs if drone is still alive and the position 
-		// to be moved to, pos is in the playable area
-		if (isAlive() && pos.inPlayArea()) {
-			// power reduced by the power consumption (step cost)
-			// current position is updated to new pos
-			// position added to movesMadeSoFar (list of positions), used to make the path
-			this.currentPower += powerConsump;
-			this.currentPos = pos;
-			this.movesMadeSoFar.add(pos);
-		}
-		// next possible moves updated
-		this.posChoices = getNextMoves();
-	}
-	
 	// let's a drone use a charging station
 	public void use(Node node) {
 		// drone can only use a charging station if it's "alive" and is within playable area

@@ -30,11 +30,11 @@ public class App
     	}
     	
     	Position initPos = mapNodes.get(0).pos;
-//    	StatelessDrone d = new StatelessDrone(initPos, (long) 0); 
+    	StatelessDrone d = new StatelessDrone(initPos, (long) 0); 
     	// second argument of stateless drone is the seed for the random walk
     	// this is so that the random walk is reproducible
     	
-    	StatefulDrone d = new StatefulDrone(initPos);
+//    	StatefulDrone d = new StatefulDrone(initPos);
     	d.play(mapNodes);
     	d.printPath();
     	

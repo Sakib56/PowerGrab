@@ -18,7 +18,7 @@ public class StatefulDrone extends Drone {
 	}
 
 	// play method carries out the algorithm
-	// while the Drone is alive, find closest green node, and go in a straight line to it, repeat
+	// while the drone is alive, find closest green node, and go in a straight line to it, repeat
 	public void play(ArrayList<Node> mapNodes) {
 		this.mapNodes = mapNodes;
 		
@@ -29,7 +29,9 @@ public class StatefulDrone extends Drone {
 			// this map is then sorted by key (distances) in ascending order
 			// then the closest green node is chosen as a target
 			// drone will then move to this target in a straight-ish line
-			
+						
+			// unlike the stateless drone, this distance-node hashmap contains all nodes in the map
+			// where as stateless has a distance-node map only contains nodes in range within one step
 			Map<Double, Node> unsortedDistNodes = getUnsortedDistNodes(); // create unsorted distance-node map
 			this.distNodeMap = sortDistNodes(unsortedDistNodes);		  // sort this map using key, smallest dist first...
 			Node closestGoodNode = getClosestGreenNode();				  // get closest green charging station from this map
