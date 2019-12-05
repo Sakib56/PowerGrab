@@ -27,7 +27,7 @@ public class StatelessDrone extends Drone {
 		this.mapNodes = mapNodes;
 		
 		// while the drone is alive...
-		while (isAlive()) {
+		while (isAlive() && this.movesMadeSoFar.size() <= this.maxMovesAllowed) {
 			// create a map (key, value pairs) where the key is the 
 			// distance from currentPos to a node and value is the node object
 			// this map is then sorted by key (distances) in ascending order
@@ -120,7 +120,8 @@ public class StatelessDrone extends Drone {
 	public void moveTo(Position pos) {
 		// move only occurs if drone is still alive and the position 
 		// to be moved to, pos is in the playable area
-		if (isAlive() && pos.inPlayArea() && this.movesMadeSoFar.size() <= this.maxMovesAllowed) {
+		
+		if (isAlive() && pos.inPlayArea()) {
 			// power reduced by the power consumption (step cost)
 			// current position is updated to new pos
 			// position added to movesMadeSoFar (list of positions), used to make the path
