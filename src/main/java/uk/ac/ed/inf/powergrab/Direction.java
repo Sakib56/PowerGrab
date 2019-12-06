@@ -59,6 +59,7 @@ public class Direction {
 		return allDirs;
 	}
 	
+	// returns the correct direction based on the angle, should have used swithc statements
 	public String toString() {
 		if (this.angle == E.angle) {
 			return "E";

@@ -69,7 +69,10 @@ public class Drone {
 	}
 	
 	// prints the path to terminal
+	// also for geo
 	public String printPath() {
+		
+		
     	String coordinates = "";
     	for (int i=0; i<this.movesMadeSoFar.size(); i++) {
     		Position pos = this.movesMadeSoFar.get(i);
@@ -91,7 +94,7 @@ public class Drone {
     			coordinates +
     			"        ]\r\n" + 
     			"      }\r\n" + 
-    			"    },";	
+    			"    }";	
 	}
 	
 	public String toString() {

@@ -16,6 +16,7 @@ public class App
 {
     private static java.util.Scanner scanner;
     
+    
 	public static void main( String[] args ) throws IOException
     {
     	String day = args[0];
@@ -31,7 +32,17 @@ public class App
 		// a new state(less/ful) drone is created using the initial position.
 		// The drone, named d, is made to play and it carries out the appropriate algorithm.
 		// Path is then printed to terminal
-    	ArrayList<Node> mapNodes = getMapNodeList(year, month, day);
+    	
+    	// checks if inputs are in the correct format (ISO) yyyy/mm/dd
+    	month = month.length() == 1 ? "0"+month : month;
+    	day = day.length() == 1 ? "0"+day : day;
+    	String date = year+"/"+month+"/"+day;
+    	// constructs the correct URL to use based on the date
+    	String mapString = "http://homepages.inf.ed.ac.uk/stg/powergrab/"+date+"/powergrabmap.geojson";
+    	
+    	// establishes connection from power grab map for specific date and returns fc
+    	FeatureCollection fc = connectToInfServer(mapString);    	
+    	ArrayList<Node> mapNodes = getMapNodeList(fc);
 
     	Position initPos = new Position(Double.parseDouble(lat), Double.parseDouble(lon));
 
@@ -40,17 +51,17 @@ public class App
         	// this is so that the random walk is reproducible
         	StatelessDrone d = new StatelessDrone(initPos, Long.parseLong(seed)); 
         	d.play(mapNodes);
-        	printToFile(d, droneType, day, month, year);
+        	printToFile(d, droneType, day, month, year, fc);
 
     	} else {
         	StatefulDrone d = new StatefulDrone(initPos);
         	d.play(mapNodes);
-    		printToFile(d, droneType, day, month, year);
+    		printToFile(d, droneType, day, month, year, fc);
     	}
 
     }
 	
-	private static void printToFile(Drone d, String droneType, String day, String month, String year) throws FileNotFoundException, UnsupportedEncodingException {
+	private static void printToFile(Drone d, String droneType, String day, String month, String year, FeatureCollection fc) throws FileNotFoundException, UnsupportedEncodingException {
     	ArrayList<String> linesOfFile = new ArrayList<String>();
     	for (int i=0; i<d.movesMadeSoFar.size()-1; i++) {
     		Position p1 = d.movesMadeSoFar.get(i);
@@ -62,7 +73,7 @@ public class App
     		linesOfFile.add(newLine);
     	}
     	writeToFile(droneType+"-"+day+"-"+month+"-"+year+".txt", linesOfFile);
-    	writeToFile(droneType+"-"+day+"-"+month+"-"+year+".geojson", d.printPath());
+    	writeToFile(droneType+"-"+day+"-"+month+"-"+year+".geojson", fc.toJson().replace("}}]}", "}},"+d.printPath()+"]}"));
 	}
 	
 	    public static void writeToFile(String fileName, ArrayList<String> linesOfFile) {  
@@ -93,17 +104,7 @@ public class App
 	    } 
     
 	// returns an arraylist of node objects (charging stations)
-    private static ArrayList<Node> getMapNodeList(String year, String month, String day) throws IOException {
-    	// checks if inputs are in the correct format (ISO) yyyy/mm/dd
-    	month = month.length() == 1 ? "0"+month : month;
-    	day = day.length() == 1 ? "0"+day : day;
-    	String date = year+"/"+month+"/"+day;
-    	// constructs the correct URL to use based on the date
-    	String mapString = "http://homepages.inf.ed.ac.uk/stg/powergrab/"+date+"/powergrabmap.geojson";
-    	
-    	// establishes connection from power grab map for specific date and returns fc
-    	FeatureCollection fc = connectToInfServer(mapString);
-    	
+    private static ArrayList<Node> getMapNodeList(FeatureCollection fc) throws IOException {
     	ArrayList<Node> mapNodes = new ArrayList<Node>();
     	for (Feature f : fc.features()) {
     		// fc's info is parsed (coins, power, type, location)
