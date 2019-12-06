@@ -24,6 +24,12 @@ public class App
     	String lon = args[4];
     	String seed = args[5];
     	String droneType = args[6];
+    	
+    	lat = "55.944425";
+    	lon = "-3.188396";
+    	for (int i=1; i<13; i++) {
+    		day = Integer.toString(i);
+    		month = Integer.toString(i);
 		
 		// Map is created via connecting to power grab inf website using a specific date
 		// an initial position is chosen for the drone
@@ -56,7 +62,7 @@ public class App
         	d.play(mapNodes);
     		printToFile(d, droneType, day, month, year, fc);
     	}
-
+    	}
     }
 	
 	private static void printToFile(Drone d, String droneType, String day, String month, String year, FeatureCollection fc) throws FileNotFoundException, UnsupportedEncodingException {

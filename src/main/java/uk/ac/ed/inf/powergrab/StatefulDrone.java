@@ -137,7 +137,7 @@ public class StatefulDrone extends Drone {
 		double increment = dirToMoveIn.getIncrement() + 0.0001; 
 		// we only check half compass e.g. if dirToMoveIn is East, we scan from North to South
 		// if all those dirs were bad then, just return the orignal direction and go into radius of red
-		for (int i=-4; i<5; i++) {
+		for (int i=-7; i<8; i++) {
 			Direction newDir = dirToMoveIn.snapDir(dirToMoveIn.angle+(increment*i));
 			Position newPos = this.currentPos.nextPosition(dirToMoveIn);
 			if (!isNextPosBad(newPos)) {
