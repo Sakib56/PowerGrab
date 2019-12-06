@@ -3,7 +3,6 @@ package uk.ac.ed.inf.powergrab;
 public class Node {
 	private static final double r = 0.00025; // radius of effect
 	public boolean used = false;
-	public Position tempFromPos = null;	// temp buffer to store a pos that drone can get to s.t. in radius of this node
 	public double weight = 0;
 	public double coins = 0;
 	public double power = 0;
@@ -17,15 +16,6 @@ public class Node {
 		this.type = type;
 		this.pos = pos;
 		this.weight = getWeight(); // "green-ness"/"red-ness" of a node
-	}
-	
-	public Node(float coins, float power, String type, Position pos, Position tempFromPos) {
-		this.coins = coins;
-		this.power = power;
-		this.type = type;
-		this.pos = pos;
-		this.weight = getWeight();
-		this.tempFromPos = tempFromPos;
 	}
 	
 	public String toString() {

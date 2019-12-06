@@ -59,6 +59,42 @@ public class Direction {
 		return allDirs;
 	}
 	
+	public String toString() {
+		if (this.angle == E.angle) {
+			return "E";
+		} if (this.angle == ENE.angle) {
+			return "ENE";
+		} if (this.angle == NE.angle) {
+			return "NE";
+		} if (this.angle == NNE.angle) {
+			return "NNE";
+		} if (this.angle == N.angle) {
+			return "N";
+		} if (this.angle == NNW.angle) {
+			return "NNW";
+		} if (this.angle == NW.angle) {
+			return "NW";
+		} if (this.angle == WNW.angle) {
+			return "W";
+		} if (this.angle == WSW.angle) {
+			return "WSW";
+		} if (this.angle == W.angle) {
+			return "W";
+		} if (this.angle == SW.angle) {
+			return "SW";
+		} if (this.angle == SSW.angle) {
+			return "SSW";
+		} if (this.angle == S.angle) {
+		 	return "S";
+		} if (this.angle == SSE.angle) {
+			return "SSE";
+		} if (this.angle == SE.angle) {
+			return "SE";
+		} else {
+			return "ESE";
+		}
+	}
+	
 	// east was chosen to be 0 degrees to avoid "CAST" calculations
 	// angles in radians due to Math.cos(a) requires a to be in radians
 	static final Direction E  = new Direction(0); 					// 0

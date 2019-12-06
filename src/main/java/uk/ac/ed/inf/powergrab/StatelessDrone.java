@@ -3,6 +3,7 @@ package uk.ac.ed.inf.powergrab;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -42,20 +43,23 @@ public class StatelessDrone extends Drone {
 			
 			// if the closest green node is null
 			Position bestNextMove;
+			Direction dirToMoveIn = null;
 			if (closestGoodNode == null) {
 				// this means that there was no good green nodes in range and the drone should take a random step
-				ArrayList<Position> possibleNextPos = getNextMoves(); // gets a list of all positions resulted by moving in all possible directions 
-				bestNextMove = getRandom(possibleNextPos);			  // picks a random position (corresponding to moving in a random direction)
+				List<Direction> possibleNextDirs = new Direction().getAllDirs();		// get a list of all possible directions
+				dirToMoveIn = getRandomDirs(possibleNextDirs);					// randomly pick a direction
+				bestNextMove = this.currentPos.nextPosition(dirToMoveIn);;    	// and move in that direction
+
 			} else {
 				// otherwise, the drone has a found a green charging station within range and will move towards it
 				// by finding the angle (from east) between current position and node's position, snapping the angle
 				// to 1 of 16 possible directions and moving
 				double angle = this.currentPos.getAngleBetween(closestGoodNode.pos);
-				Direction dirToMoveIn = new Direction().snapDir(angle);
+				dirToMoveIn = new Direction().snapDir(angle);
 				bestNextMove = this.currentPos.nextPosition(dirToMoveIn);
 			}
 			
-			moveTo(bestNextMove);
+			moveTo(bestNextMove, dirToMoveIn);
 		}
 	}
 
@@ -116,7 +120,7 @@ public class StatelessDrone extends Drone {
 	}
 	
 	// makes drone move to a specific position
-	public void moveTo(Position pos) {
+	public void moveTo(Position pos, Direction dirToMoveIn) {
 		// move only occurs if drone is still alive and the position 
 		// to be moved to, pos is in the playable area
 		
@@ -126,7 +130,6 @@ public class StatelessDrone extends Drone {
 			// position added to movesMadeSoFar (list of positions), used to make the path
 			this.currentPower += powerConsump;
 			this.currentPos = pos;
-			this.movesMadeSoFar.add(pos);
 			
 			// at each step, distance-node map, distNodeMap is recaculated and sorted
 			// this is done so that distances in distNodeMap are always up to date
@@ -151,5 +154,9 @@ public class StatelessDrone extends Drone {
 		}
 		// next possible moves updated
 		this.posChoices = getNextMoves();
+		if (this.movesMadeSoFar.size() <= this.maxMovesAllowed) {
+			this.movesMadeSoFar.add(pos);
+			this.statsAtEachStep.add("p1,"+dirToMoveIn+",p2,"+this.currentCoins+","+this.currentPower);
+		}
 	}
 }

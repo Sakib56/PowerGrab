@@ -14,6 +14,10 @@ public class Drone {
 	public ArrayList<Position> posChoices;
 	public ArrayList<Position> movesMadeSoFar = new ArrayList<Position>();
 	public Random randomSeed = new Random();
+	
+	// used to output to txt file
+	public ArrayList<Direction> dirsUsed = new ArrayList<Direction>();
+	public ArrayList<String> statsAtEachStep = new ArrayList<String>(); 
 
 	// drone constructor
 	public Drone(Position initPos) {
@@ -24,11 +28,11 @@ public class Drone {
 		this.movesMadeSoFar.add(initPos);
 	}
 	
-	// let's a drone use a charging station
+	// This method let's a drone use a charging station
 	public void use(Node node) {
-		// drone can only use a charging station if it's "alive" and is within playable area
+		// The drone can only use a charging station if it's "alive" and is within playable area
 		if (isAlive() && this.currentPos.inPlayArea()) {
-			// when drone uses a station, drone takes coins and power from station and it has been used
+			// when the drone uses a station, the drone takes coins and power from station and it has been used
 			this.currentPower += node.power;
 			this.currentCoins += node.coins;
 			
@@ -57,6 +61,7 @@ public class Drone {
 		return posChoices;
 	}
 	
+	
 	// checks if the drone is "alive", has enough power to make another move
 	public boolean isAlive() {
 		// check against powerConsump not 0, or we'll get negative power
@@ -64,7 +69,7 @@ public class Drone {
 	}
 	
 	// prints the path to terminal
-	public void printPath() {
+	public String printPath() {
     	String coordinates = "";
     	for (int i=0; i<this.movesMadeSoFar.size(); i++) {
     		Position pos = this.movesMadeSoFar.get(i);
@@ -77,7 +82,7 @@ public class Drone {
 			}
     	}
     	
-    	System.out.println("    {\r\n" + 
+    	return 	"    {\r\n" + 
     			"      \"type\": \"Feature\",\r\n" + 
     			"      \"properties\": { },\r\n" + 
     			"      \"geometry\": {\r\n" + 
@@ -86,7 +91,7 @@ public class Drone {
     			coordinates +
     			"        ]\r\n" + 
     			"      }\r\n" + 
-    			"    },");	
+    			"    },";	
 	}
 	
 	public String toString() {
@@ -99,5 +104,11 @@ public class Drone {
 	public Position getRandom(ArrayList<Position> possibleNextPos) {
 	    int rnd = randomSeed.nextInt(possibleNextPos.size());
 	    return possibleNextPos.get(rnd);
+	}
+	
+	// Gets a random element out of an ArrayList<Position>, possibleNextPos
+	public Direction getRandomDirs(List<Direction> possibleDirs) {
+	    int rnd = randomSeed.nextInt(possibleDirs.size());
+	    return possibleDirs.get(rnd);
 	}
 }

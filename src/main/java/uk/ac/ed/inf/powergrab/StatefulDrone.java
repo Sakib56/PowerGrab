@@ -111,12 +111,75 @@ public class StatefulDrone extends Drone {
 			double angle = this.currentPos.getAngleBetween(node.pos);
 			Direction dirToMoveIn = new Direction().snapDir(angle);
 			Position posToMoveIn = this.currentPos.nextPosition(dirToMoveIn);
-			moveTo(posToMoveIn);
+			
+			// CODE COMMENTED OUT, RED NODE AVOIDANCE STOPPED WORKING (MAY CAUSE INFINITE LOOPS)
+			
+//			boolean nextPosIsBad = isNextPosBad(posToMoveIn);
+//			if (nextPosIsBad) {
+//				Position redNodePos = getPosForClosestRedNode();
+//				double angleToRedNode = this.currentPos.getAngleBetween(redNodePos);
+//				List<Direction> possibleDirs = dirToMoveIn.getAllDirs();
+//				
+//				if (angle-angleToRedNode>0) {
+//					//right
+//					for (i=1; i<possibleDirs.size()/2; i++) {
+//						int getIndexOfDirToGreenNode = (int) (possibleDirs.indexOf(dirToMoveIn)+i % possibleDirs.size());
+//						Direction dirToTheRight = possibleDirs.get(getIndexOfDirToGreenNode);
+//						Position posToTheRight = this.currentPos.nextPosition(dirToTheRight);
+//						if (!isNextPosBad(posToTheRight)) {
+//							//move?
+//							posToMoveIn = posToTheRight;
+////							moveTo(posToTheRight);
+//							break;
+//						}
+//					}
+//
+//				} else {
+//					//left
+//					for (i=1; i<possibleDirs.size()/2; i++) {
+//						int getIndexOfDirToGreenNode = (int) (possibleDirs.indexOf(dirToMoveIn)-i % possibleDirs.size());
+//						Direction dirToTheLeft = possibleDirs.get(getIndexOfDirToGreenNode);
+//						Position posToTheLeft = this.currentPos.nextPosition(dirToTheLeft);
+//						if (!isNextPosBad(posToTheLeft)) {
+//							//move?
+//							posToMoveIn = posToTheLeft;
+////							moveTo(posToTheLeft);
+//							break;
+//						}
+//					}
+//				}
+//			}
+
+			if (posToMoveIn.inPlayArea()) {
+				this.dirsUsed.add(dirToMoveIn);
+			}
+			moveTo(posToMoveIn, dirToMoveIn);
 		}
 	}
 	
+//	public boolean isNextPosBad(Position pos) {
+//		for (Entry<Double, Node> entry : this.distNodeMap.entrySet()) {
+//			Node node = entry.getValue();
+//			if (node.pos.getL2Dist(pos) <= node.getRadius()) {
+//				return node.weight<0;
+//			}
+//			break;
+//		} 
+//		return false;
+//	}
+//	
+//	public Position getPosForClosestRedNode() {
+//		for (Entry<Double, Node> entry : this.distNodeMap.entrySet()) {
+//			Node node = entry.getValue();
+//			if (node.weight<0) {
+//				return node.pos;
+//			}
+//		}
+//		return null;
+//	}
+	
 	// makes drone move to a specific position
-	public void moveTo(Position pos) {
+	public void moveTo(Position pos, Direction dirToMoveIn) {
 		// move only occurs if drone is still alive and the position 
 		// to be moved to, pos is in the playable area
 
@@ -152,6 +215,7 @@ public class StatefulDrone extends Drone {
 		this.posChoices = getNextMoves();
 		if (this.movesMadeSoFar.size() <= this.maxMovesAllowed) {
 			this.movesMadeSoFar.add(pos);
+			this.statsAtEachStep.add("p1,"+dirToMoveIn+",p2,"+this.currentCoins+","+this.currentPower);
 		}
 	}
 }

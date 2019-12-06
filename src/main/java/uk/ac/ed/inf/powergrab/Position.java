@@ -15,7 +15,7 @@ public class Position {
 	public Position nextPosition(Direction direction) {
 		double angle = direction.angle;
 		if (!inPlayArea()) { // if not in the playable area, move towards centre of map (avoids getting stuck)
-			Position centreOfMap = new Position((55.942617+55.946233)/2, (-3.192473-3.184319)/2);
+			Position centreOfMap = new Position((55.942617+55.946233)/2, (-3.192473-3.184319)/2); //latitude then longitude for the center of our map
 			angle = this.getAngleBetween(centreOfMap);
 			angle = new Direction().snapDir(angle).angle;
 		}
@@ -35,7 +35,7 @@ public class Position {
 	
 	// gets euclidean distance between current position and given position
 	public double getL2Dist(Position pos) {
-		// removing sqrt will speed up calculations but comparisons values must be squared
+		// removing sqrt will speed up calculations but the comparisons values must be squared
 		double deltaLat = Math.abs(this.latitude - pos.latitude);
 		double deltaLong = Math.abs(this.longitude - pos.longitude);
 		return Math.sqrt(Math.pow(deltaLat, 2) + Math.pow(deltaLong, 2)); //with sqrt
@@ -55,7 +55,7 @@ public class Position {
 	}
 	
 	public String toString() {
-		return "pos("+this.latitude+", "+this.longitude+")";
+		return this.latitude+","+this.longitude;
 	}
 	
 	// works out the angle between any two points from east, (x-axis) 

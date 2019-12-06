@@ -1,6 +1,10 @@
 package uk.ac.ed.inf.powergrab;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,39 +18,79 @@ public class App
     
 	public static void main( String[] args ) throws IOException
     {
-		// map is created via connecting to power grab inf website using a specific date
+    	String day = args[0];
+    	String month = args[1];
+    	String year = args[2];
+    	String lat = args[3];
+    	String lon = args[4];
+    	String seed = args[5];
+    	String droneType = args[6];
+		
+		// Map is created via connecting to power grab inf website using a specific date
 		// an initial position is chosen for the drone
-		// a new state(less/full) drone is created using the init pos defined
-		// drone, d is made to play which carries out the appropriate algorithm
-		// path is then printed to terminal
-		float avg = 0;
-    	for (int i=0; i<49; i++) {
-    	ArrayList<Node> mapNodes = getMapNodeList("2019", "01", "01");
-    	
-    	float totalCoins = 0;
-    	for (Node n: mapNodes) {
-    		if (n.weight>0) {
-    			totalCoins += n.coins;
-    		}
-    	}
-    	
+		// a new state(less/ful) drone is created using the initial position.
+		// The drone, named d, is made to play and it carries out the appropriate algorithm.
+		// Path is then printed to terminal
+    	ArrayList<Node> mapNodes = getMapNodeList(year, month, day);
 
-    	Position initPos = mapNodes.get(i).pos;
-//    	StatelessDrone d = new StatelessDrone(initPos, (long) 3); 
-    	// second argument of stateless drone is the seed for the random walk
-    	// this is so that the random walk is reproducible
-    	
-    	StatefulDrone d = new StatefulDrone(initPos);
-    	d.play(mapNodes);
-//    	d.printPath();
-    	
-//    	System.out.println("\n"+d.toString());
-    	System.out.println(d.currentCoins+"/"+totalCoins+" = "+100*d.currentCoins/totalCoins+"%");
-    	avg += 100*d.currentCoins/totalCoins;
+    	Position initPos = new Position(Double.parseDouble(lat), Double.parseDouble(lon));
+
+    	if (droneType.equalsIgnoreCase("stateless")) {
+        	// The second argument of stateless drone is the seed for the random walk
+        	// this is so that the random walk is reproducible
+        	StatelessDrone d = new StatelessDrone(initPos, Long.parseLong(seed)); 
+        	d.play(mapNodes);
+        	printToFile(d, droneType, day, month, year);
+
+    	} else {
+        	StatefulDrone d = new StatefulDrone(initPos);
+        	d.play(mapNodes);
+    		printToFile(d, droneType, day, month, year);
     	}
-    	System.out.println(avg/49);
-    	
+
     }
+	
+	private static void printToFile(Drone d, String droneType, String day, String month, String year) throws FileNotFoundException, UnsupportedEncodingException {
+    	ArrayList<String> linesOfFile = new ArrayList<String>();
+    	for (int i=0; i<d.movesMadeSoFar.size()-1; i++) {
+    		Position p1 = d.movesMadeSoFar.get(i);
+    		Position p2 = d.movesMadeSoFar.get(i+1);
+    		if (i >= d.statsAtEachStep.size()) {
+    			break;
+    		}
+    		String newLine = d.statsAtEachStep.get(i).replace("p1", p1.toString()).replace("p2", p2.toString());
+    		linesOfFile.add(newLine);
+    	}
+    	writeToFile(droneType+"-"+day+"-"+month+"-"+year+".txt", linesOfFile);
+    	writeToFile(droneType+"-"+day+"-"+month+"-"+year+".geojson", d.printPath());
+	}
+	
+	    public static void writeToFile(String fileName, ArrayList<String> linesOfFile) {  
+	        PrintWriter printWriter;  
+	        try {    
+	            printWriter = new PrintWriter(new FileOutputStream(fileName, true));
+	            int length = linesOfFile.size();    
+	            for(int i = 0; i < length; i++) {
+	                printWriter.println(linesOfFile.get(i));  
+	            }   
+	            printWriter.close();    
+	        }  
+	        catch(IOException e) {  
+	            System.out.println(e.getMessage());  
+	        }  
+	    }
+	    
+	    public static void writeToFile(String fileName, String dPath) {  
+	        PrintWriter printWriter;  
+	        try {    
+	            printWriter = new PrintWriter(new FileOutputStream(fileName, true));
+                printWriter.println(dPath);  
+	            printWriter.close();    
+	        }  
+	        catch(IOException e) {  
+	            System.out.println(e.getMessage());  
+	        }  
+	    } 
     
 	// returns an arraylist of node objects (charging stations)
     private static ArrayList<Node> getMapNodeList(String year, String month, String day) throws IOException {
