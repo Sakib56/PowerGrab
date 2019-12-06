@@ -18,7 +18,8 @@ public class StatefulDrone extends Drone {
 	}
 
 	// play method carries out the algorithm
-	// while the drone is alive, find closest green node, and go in a straight line to it, repeat
+	// while the drone is alive, find closest green node, and go in a straight line to it, if the next position is bad, the drone
+	// will scan the that half of the "half" of the compass and choose a new direction that doesn't land it in a bad node
 	public void play(ArrayList<Node> mapNodes) {
 		this.mapNodes = mapNodes;
 		
@@ -109,46 +110,16 @@ public class StatefulDrone extends Drone {
 			// snap the angle to 1 of 16 allowable directions
 			// move in that direction (for number of steps needed)
 			double angle = this.currentPos.getAngleBetween(node.pos);
+			
 			Direction dirToMoveIn = new Direction().snapDir(angle);
 			Position posToMoveIn = this.currentPos.nextPosition(dirToMoveIn);
 			
-			// CODE COMMENTED OUT, RED NODE AVOIDANCE STOPPED WORKING (MAY CAUSE INFINITE LOOPS)
-			
-//			boolean nextPosIsBad = isNextPosBad(posToMoveIn);
-//			if (nextPosIsBad) {
-//				Position redNodePos = getPosForClosestRedNode();
-//				double angleToRedNode = this.currentPos.getAngleBetween(redNodePos);
-//				List<Direction> possibleDirs = dirToMoveIn.getAllDirs();
-//				
-//				if (angle-angleToRedNode>0) {
-//					//right
-//					for (i=1; i<possibleDirs.size()/2; i++) {
-//						int getIndexOfDirToGreenNode = (int) (possibleDirs.indexOf(dirToMoveIn)+i % possibleDirs.size());
-//						Direction dirToTheRight = possibleDirs.get(getIndexOfDirToGreenNode);
-//						Position posToTheRight = this.currentPos.nextPosition(dirToTheRight);
-//						if (!isNextPosBad(posToTheRight)) {
-//							//move?
-//							posToMoveIn = posToTheRight;
-////							moveTo(posToTheRight);
-//							break;
-//						}
-//					}
-//
-//				} else {
-//					//left
-//					for (i=1; i<possibleDirs.size()/2; i++) {
-//						int getIndexOfDirToGreenNode = (int) (possibleDirs.indexOf(dirToMoveIn)-i % possibleDirs.size());
-//						Direction dirToTheLeft = possibleDirs.get(getIndexOfDirToGreenNode);
-//						Position posToTheLeft = this.currentPos.nextPosition(dirToTheLeft);
-//						if (!isNextPosBad(posToTheLeft)) {
-//							//move?
-//							posToMoveIn = posToTheLeft;
-////							moveTo(posToTheLeft);
-//							break;
-//						}
-//					}
-//				}
-//			}
+			// red node avoidance
+			boolean nextPosIsBad = isNextPosBad(posToMoveIn);
+			if (nextPosIsBad) {												//check if next pos will result in entering in the radius of a red node
+				dirToMoveIn = getClosestDir(dirToMoveIn);					// pick a new direction (if all in half compass is bad, then return original)
+				posToMoveIn = this.currentPos.nextPosition(dirToMoveIn);	// go
+			}
 
 			if (posToMoveIn.inPlayArea()) {
 				this.dirsUsed.add(dirToMoveIn);
@@ -157,26 +128,38 @@ public class StatefulDrone extends Drone {
 		}
 	}
 	
-//	public boolean isNextPosBad(Position pos) {
-//		for (Entry<Double, Node> entry : this.distNodeMap.entrySet()) {
-//			Node node = entry.getValue();
-//			if (node.pos.getL2Dist(pos) <= node.getRadius()) {
-//				return node.weight<0;
-//			}
-//			break;
-//		} 
-//		return false;
-//	}
-//	
-//	public Position getPosForClosestRedNode() {
-//		for (Entry<Double, Node> entry : this.distNodeMap.entrySet()) {
-//			Node node = entry.getValue();
-//			if (node.weight<0) {
-//				return node.pos;
-//			}
-//		}
-//		return null;
-//	}
+	// function will return a new direction that is not in reach of a red node, if all 
+	// directions in half compass make us reach a red node, then orignal direction is returned
+	public Direction getClosestDir(Direction dirToMoveIn) {
+		// increment is the amount added to nudge an angle so when "snapped", it's the next/prior one
+		// e.g. East + increment = East North East (when snapped)
+		// e.g. East - increment = East South East (when snapped)
+		double increment = dirToMoveIn.getIncrement() + 0.0001; 
+		// we only check half compass e.g. if dirToMoveIn is East, we scan from North to South
+		// if all those dirs were bad then, just return the orignal direction and go into radius of red
+		for (int i=-4; i<5; i++) {
+			Direction newDir = dirToMoveIn.snapDir(dirToMoveIn.angle+(increment*i));
+			Position newPos = this.currentPos.nextPosition(dirToMoveIn);
+			if (!isNextPosBad(newPos)) {
+				return newDir;
+			}
+		}
+		return dirToMoveIn;
+	}
+	
+	// returns true or false, depending on if the postion passed in is in range of a red node
+	public boolean isNextPosBad(Position pos) {
+		// since hashmap is sorted in dist order, first node we encouter with weight<0 is red
+		// and if that one isn't in range, then none of the other will be, thus we return and break
+		for (Entry<Double, Node> entry : this.distNodeMap.entrySet()) {
+			Node node = entry.getValue();
+			if (node.pos.getL2Dist(pos) <= node.getRadius()) {
+				return node.weight<0;
+			}
+			break;
+		} 
+		return false;
+	}
 	
 	// makes drone move to a specific position
 	public void moveTo(Position pos, Direction dirToMoveIn) {

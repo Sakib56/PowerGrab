@@ -96,6 +96,10 @@ public class Direction {
 		}
 	}
 	
+	public double getIncrement() {
+		return (Direction.E.angle + Direction.ENE.angle)/2;
+	}
+	
 	// east was chosen to be 0 degrees to avoid "CAST" calculations
 	// angles in radians due to Math.cos(a) requires a to be in radians
 	static final Direction E  = new Direction(0); 					// 0
