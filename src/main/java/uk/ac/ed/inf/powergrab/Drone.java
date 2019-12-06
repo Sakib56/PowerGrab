@@ -79,21 +79,21 @@ public class Drone {
     		String coord = "          ["+pos.longitude+", "+pos.latitude+"]";
 			
 			if (i == this.movesMadeSoFar.size()-1) {
-				coordinates += coord+"\r\n";
+				coordinates += coord;
 			} else {
-				coordinates += coord+",\r\n";
+				coordinates += coord+",";
 			}
     	}
     	
-    	return 	"    {\r\n" + 
-    			"      \"type\": \"Feature\",\r\n" + 
-    			"      \"properties\": { },\r\n" + 
-    			"      \"geometry\": {\r\n" + 
-    			"        \"type\": \"LineString\",\r\n" + 
-    			"        \"coordinates\": [\r\n" + 
+    	return 	"    {" + 
+    			"      \"type\": \"Feature\"," + 
+    			"      \"properties\": { }," + 
+    			"      \"geometry\": {" + 
+    			"        \"type\": \"LineString\"," + 
+    			"        \"coordinates\": [" + 
     			coordinates +
-    			"        ]\r\n" + 
-    			"      }\r\n" + 
+    			"        ]" + 
+    			"      }" + 
     			"    }";	
 	}
 	

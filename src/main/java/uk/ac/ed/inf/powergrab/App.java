@@ -16,9 +16,7 @@ public class App
 {
     private static java.util.Scanner scanner;
     
-    
-	public static void main( String[] args ) throws IOException
-    {
+	public static void main( String[] args ) throws IOException {
     	String day = args[0];
     	String month = args[1];
     	String year = args[2];
